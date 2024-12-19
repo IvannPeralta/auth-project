@@ -5,8 +5,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Configuration class for Spring Security.
+ * Defines security policies and configurations for the application.
+ */
 @Configuration
 public class SecurityConfig {
+        /**
+         * Configures the security filter chain for the application.
+         *
+         * @param http the HttpSecurity object to configure security settings.
+         * @return the configured SecurityFilterChain.
+         * @throws Exception if there is an issue during configuration.
+         */
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
