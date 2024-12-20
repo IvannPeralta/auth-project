@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import py.una.pol.auth.dto.RoleDto;
 import py.una.pol.auth.dto.UserDto;
 import py.una.pol.auth.model.User;
 import py.una.pol.auth.services.UserService;
@@ -102,5 +103,22 @@ public class UserController {
         dto.setUsername(user.getUsername());
         // Agregar roles si es necesario
         return dto;
+    }
+
+   /* Obtiene los roles asignados a un usuario */
+    @GetMapping("/{userId}/roles")
+    @Operation(summary = "Obtiene los roles de un usuario", description = "Devuelve una lista de roles asignados a un usuario específico.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de roles obtenida exitosamente."),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado."),
+            @ApiResponse(responseCode = "500", description = "Error en el servidor al obtener los roles del usuario.")
+    })
+    public ResponseEntity<List<RoleDto>> getRolesByUserId(@PathVariable Long userId) {
+        try {
+            List<RoleDto> roles = userService.getRolesByUserId(userId);
+            return ResponseEntity.ok(roles);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 }

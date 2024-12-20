@@ -60,6 +60,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/roles/{roleId}/permissions").permitAll() // Assign permissions to roles requires ADMIN authority
                 .requestMatchers(HttpMethod.GET, "/api/roles/{roleId}/permissions").permitAll() // List permissions for roles requires ADMIN authority
                 .requestMatchers(HttpMethod.POST, "/api/users/{roleId}/roles").permitAll() // Assign roles to users requires ADMIN authority
+                .requestMatchers(HttpMethod.GET, "/api/users/{roleId}/roles").permitAll() // Assign roles to users requires ADMIN authority
                 .requestMatchers("/api/users/{userId}/roles").permitAll() // Assign roles to user requires ADMIN authority
                 .anyRequest().permitAll() // All other requests require ADMIN authority
             )
