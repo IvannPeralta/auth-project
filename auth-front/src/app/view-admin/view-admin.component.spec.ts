@@ -1,18 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { ViewsComponent } from './view-admin.component';
+import { ViewAdminComponent } from '../view-admin/view-admin.component'; // Corrected path
 
 describe('ViewAdminComponent', () => {
-  let component: ViewsComponent;
-  let fixture: ComponentFixture<ViewsComponent>;
+  let component: ViewAdminComponent;
+  let fixture: ComponentFixture<ViewAdminComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ViewsComponent]
-    })
-    .compileComponents();
+      imports: [ViewAdminComponent], // Include standalone component
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(ViewsComponent);
+    fixture = TestBed.createComponent(ViewAdminComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
