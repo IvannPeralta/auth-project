@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -9,10 +11,19 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent {
-  role: string = 'user'; // Simula el rol del usuario
+  role: string = ''; 
 
-  hasPermission(role: string): boolean {
-    // Simula permisos basados en el rol
-    return this.role === role;
+  constructor (private authService: AuthService, private router: Router) {}
+
+  hasRole(role: string): boolean {
+    return this.authService.getUserRoles()?.includes(role) || false;
+  }
+
+  irView(role: string): void {
+    if (role === 'admin') {
+      this.router.navigate(['/view-admin']);
+    } else {
+      this.router.navigate(['/view-user']);
+    }
   }
 }
