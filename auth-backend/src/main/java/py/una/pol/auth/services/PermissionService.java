@@ -29,6 +29,49 @@ public class PermissionService {
         return convertPermissionDto(newpermission);
     }
 
+    
+
+
+      /**
+     * Busca un permiso por su ID.
+     *
+     * @param id El ID del permiso a buscar.
+     * @return PermissionDTO que representa el permiso encontrado.
+     * @throws RuntimeException Si no se encuentra el permiso.
+     */
+    public PermissionDto findById(Long id) {
+        Permission permissionNew = permission.findById(id)
+                .orElseThrow(() -> new RuntimeException("Permission not found"));
+        return convertPermissionDto(permissionNew);
+    }
+
+    /**
+     * Actualiza un permiso existente con la información del PermissionDTO proporcionado.
+     *
+     * @param id El ID del permiso a actualizar.
+     * @param permissionDto El PermissionDTO que contiene la nueva información del permiso.
+     * @return PermissionDTO que representa el permiso actualizado.
+     * @throws RuntimeException Si no se encuentra el permiso.
+     */
+    public PermissionDto update(Long id, PermissionDto permissionDto) {
+        Permission permissionNew = permission.findById(id)
+                .orElseThrow(() -> new RuntimeException("Permission not found"));
+        permissionNew.setName(permissionDto.getName());
+        permissionNew.setDescription(permissionDto.getDescription());
+        permissionNew = permission.save(permissionNew);
+        return convertPermissionDto(permissionNew);
+    }
+
+    /**
+     * Elimina un permiso por su ID.
+     *
+     * @param id El ID del permiso a eliminar.
+     */
+    public void delete(Long id) {
+        permission.deleteById(id);
+    }
+
+    
     private PermissionDto convertPermissionDto(Permission permission){
         PermissionDto permissionDto = new PermissionDto();
         permissionDto.setId(permission.getId());
@@ -43,4 +86,5 @@ public class PermissionService {
         permission.setDescription(permissionDto.getDescription());
         return permission;
     }
+    
 }

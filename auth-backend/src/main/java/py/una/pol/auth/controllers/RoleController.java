@@ -83,5 +83,110 @@ public class RoleController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    /*
+     * Metodo que obtiene un rol por su id
+     *
+     * @param id El ID del rol.
+     * @return El rol correspondiente al ID.
+     */
+    @GetMapping("/{id}")
+    @Operation(summary = "Obtiene un rol por ID", description = "Devuelve los detalles de un rol específico.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Rol encontrado."),
+            @ApiResponse(responseCode = "404", description = "Rol no encontrado."),
+            @ApiResponse(responseCode = "500", description = "Error en el servidor al obtener el rol.")
+    })
+    public ResponseEntity<RoleDto> getRoleById(@PathVariable Long id) {
+        RoleDto role = roleService.findById(id);
+        return new ResponseEntity<>(role, HttpStatus.OK);
+    }
 
+
+    /**
+     * Actualiza un rol existente.
+     *
+     * @param id El ID del rol a actualizar.
+     * @param roleDto El DTO con los nuevos datos del rol.
+     * @return El rol actualizado.
+     */
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualiza un rol existente", description = "Actualiza los detalles de un rol específico.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Rol actualizado exitosamente."),
+            @ApiResponse(responseCode = "404", description = "Rol no encontrado."),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida."),
+            @ApiResponse(responseCode = "500", description = "Error en el servidor al actualizar el rol.")
+    })
+    public ResponseEntity<RoleDto> updateRole(@PathVariable Long id, @RequestBody RoleDto roleDto) {
+        RoleDto updatedRole = roleService.updateRole(id, roleDto);
+        return new ResponseEntity<>(updatedRole, HttpStatus.OK);
+    }
+
+    /**
+     * Elimina un rol existente.
+     *
+     * @param id El ID del rol a eliminar.
+     * @return Respuesta sin contenido.
+     */
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Elimina un rol existente", description = "Elimina un rol específico según su ID. Devuelve un código 204 si la eliminación fue exitosa o un código 404 si el rol no fue encontrado.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Rol eliminado exitosamente. No hay contenido adicional en la respuesta."),
+            @ApiResponse(responseCode = "404", description = "Rol no encontrado. No se pudo realizar la eliminación porque el ID especificado no existe."),
+            @ApiResponse(responseCode = "500", description = "Error en el servidor al intentar eliminar el rol. Puede deberse a problemas internos del servidor.")
+    })
+    public ResponseEntity<Void> deleteRole(@PathVariable Long id) {
+        boolean eliminado = roleService.delete(id);
+        if (!eliminado) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Obtiene los permisos asignados a un rol.
+     *
+     * @param roleId El ID del rol.
+     * @return Lista de permisos asignados al rol.
+     */
+    @GetMapping("/{roleId}/permissions")
+    @Operation(summary = "Obtiene los permisos de un rol", description = "Devuelve una lista de permisos asignados a un rol específico.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de permisos obtenida exitosamente."),
+            @ApiResponse(responseCode = "404", description = "Rol no encontrado."),
+            @ApiResponse(responseCode = "500", description = "Error en el servidor al obtener los permisos del rol.")
+    })
+    public ResponseEntity<?> getPermissionsByRoleId(@PathVariable Long roleId) {
+
+
+        List<PermissionDto> permissions = roleService.getPermissionsByRoleId(roleId);
+        // Si no se encuentran permisos, lanzar una excepción
+        if (permissions.isEmpty()) {
+            if (permissions.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("No se encontraron permisos para el rol especificado.");
+            }
+        }
+        return new ResponseEntity<>(permissions, HttpStatus.OK);
+    }
+    
+
+
+    // Método en el controlador para asignar permisos a un rol
+    @PutMapping("/{roleId}/permissions")
+    @Operation(summary = "Asigna permisos a un rol", description = "Asigna una lista de permisos a un rol específico.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Permisos asignados exitosamente."),
+            @ApiResponse(responseCode = "404", description = "Rol o permisos no encontrados."),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida."),
+            @ApiResponse(responseCode = "500", description = "Error en el servidor.")
+    })
+    public ResponseEntity<String> assignPermissionsToRole(@PathVariable Long roleId, @RequestBody List<Long> permissionIds) {
+        try {
+            roleService.assignPermissionsToRole(roleId, permissionIds);
+            return ResponseEntity.ok("Permisos asignados exitosamente.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
+        }
+    }
 }
