@@ -7,11 +7,13 @@ import py.una.pol.auth.repository.UserRepository;
 import py.una.pol.auth.model.Role;
 import py.una.pol.auth.model.User;
 import py.una.pol.auth.dto.RoleDto;
+import py.una.pol.auth.dto.RoleDto;
 import py.una.pol.auth.dto.UserDto;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Collectors;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -73,14 +75,64 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    /* Metodo que obtiene todos los usuarios */
     public List<User> getAllUsers(){
         return userRepository.findAll();    
     }
 
+    /* Metodo que obtiene un usuario por su id */
     public Optional<User> getUserById(Long id){
         return userRepository.findById(id);
     }
 
+    /* Metodo que obtiene todos los roles de un usuario por su id}@param: id del usuario
+     * @return: lista de los roles del usuario
+     */
+    public List<RoleDto> getRolesByUserId(Long userId) {
+        List<Role> roles = userRepository.findRolesByUserId(userId);
+        return roles.stream()
+                .map(role -> {
+                    RoleDto roleDTO = new RoleDto();
+                    roleDTO.setId(role.getId());
+                    roleDTO.setName(role.getName());
+                    return roleDTO;
+                })
+                .collect(Collectors.toList());
+    }
+
+    /*
+     *Metodo asociado al Controller que actualiza la informacion de un usuario
+     *
+     * @param id El ID del usuario a actualizar.
+     * @param userDto El UserDTO que contiene la nueva información del usuario.
+     * @return User que representa el usuario actualizado.
+     * @throws RuntimeException Si no se encuentra el usuario.
+     */
+    public User updateUser(Long id, UserDto userDto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found")); // Manejo de errores
+        user.setUsername(userDto.getUsername());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword())); // Codifica la nueva contraseña
+        return userRepository.save(user);
+    }
+
+    /**
+     * Elimina un usuario por su ID.
+     *
+     * @param id El ID del usuario a eliminar.
+     */
+    public boolean deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            return false; // Usuario no encontrado
+        }
+        userRepository.deleteById(id);
+        return true; // Eliminación exitosa
+    }
+
+    /* Metodo que asigna roles a un usuario
+     * @param id de usuario
+     * @param Lista de roles a ser asignados a dicho usuario
+     */
     public void assignRoles(Long userId,List<Long> rolesId){
         User user=userRepository.findById(userId).orElseThrow(()-> new RuntimeException("Usuario no encontrado"));
 
@@ -107,5 +159,70 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Asigna múltiples roles a un usuario. (Versión básica, sin quitar roles existentes).
+     *
+     * @param userId  ID del usuario.
+     * @param roleIds IDs de los roles a asignar.
+     */
+    public void assignRolesToUser(Long userId, List<Long> roleIds) {
+        // Verificar que el usuario existe
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    
+        System.out.println("Usuario encontrado: " + user.getUsername());
+        System.out.println("Roles actuales del usuario: " + user.getRoles().stream()
+                .map(Role::getName).collect(Collectors.toList()));
+    
+        // Verificar que todos los roles existen
+        List<Role> roles = role.findAllById(roleIds);
+    
+        // Si no se encuentran todos los roles, lanzar una excepción
+        if (roles.size() != roleIds.size()) {
+            throw new RuntimeException("Some roles not found");
+        }
+    
+        // Sobrescribir roles del usuario
+        user.setRoles(new HashSet<>(roles)); // Usamos un HashSet para evitar duplicados
+    
+        // Guardar el usuario con los roles actualizados
+        userRepository.save(user);
+
+    }
+
+    /**
+     * Asigna múltiples roles a un usuario. (Versión básica, sin quitar roles existentes).
+     *
+     * @param userId  ID del usuario.
+     * @param roleIds IDs de los roles a asignar.
+     */
+    public void assignRolesToUser(Long userId, List<Long> roleIds) {
+        // Verificar que el usuario existe
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    
+        System.out.println("Usuario encontrado: " + user.getUsername());
+        System.out.println("Roles actuales del usuario: " + user.getRoles().stream()
+                .map(Role::getName).collect(Collectors.toList()));
+    
+        // Verificar que todos los roles existen
+        List<Role> roles = role.findAllById(roleIds);
+    
+        // Si no se encuentran todos los roles, lanzar una excepción
+        if (roles.size() != roleIds.size()) {
+            throw new RuntimeException("Some roles not found");
+        }
+    
+        // Sobrescribir roles del usuario
+        user.setRoles(new HashSet<>(roles)); // Usamos un HashSet para evitar duplicados
+    
+        // Guardar el usuario con los roles actualizados
+        userRepository.save(user);
+    
+        System.out.println("Roles finales del usuario: " + user.getRoles().stream()
+                .map(Role::getName).collect(Collectors.toList()));
+    }
+
+   
     
 }

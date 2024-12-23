@@ -47,22 +47,29 @@ public class SecurityConfig {
                 ).permitAll()
                 .requestMatchers("/api/users/register").permitAll() // Allow user registration
                 .requestMatchers("/api/auth/login").permitAll() // Allow login
-                .requestMatchers(HttpMethod.POST, "/api/roles").permitAll() // Role creation requires ADMIN authority
-                .requestMatchers(HttpMethod.GET, "/api/roles").permitAll() // List roles requires ADMIN authority
-                .requestMatchers(HttpMethod.GET, "/api/roles/{id}").permitAll() // Get role by ID requires ADMIN authority
-                .requestMatchers(HttpMethod.PUT, "/api/roles/{id}").permitAll() // Update roles requires ADMIN authority
-                .requestMatchers(HttpMethod.POST, "/api/permissions").permitAll() // Create permissions requires ADMIN authority
-                .requestMatchers(HttpMethod.GET, "/api/permissions/{id}").permitAll() // Get permission by ID requires ADMIN authority
-                .requestMatchers(HttpMethod.GET, "/api/permissions").permitAll() // List permissions requires ADMIN authority
-                .requestMatchers(HttpMethod.POST, "/api/users").permitAll() // Create users requires ADMIN authority
-                .requestMatchers(HttpMethod.GET, "/api/users").permitAll() // List users requires ADMIN authority
-                .requestMatchers(HttpMethod.POST, "/api/roles/{roleId}/permissions").permitAll() // Assign permissions to roles requires ADMIN authority
-                .requestMatchers(HttpMethod.PUT, "/api/roles/{roleId}/permissions").permitAll() // Assign permissions to roles requires ADMIN authority
-                .requestMatchers(HttpMethod.GET, "/api/roles/{roleId}/permissions").permitAll() // List permissions for roles requires ADMIN authority
-                .requestMatchers(HttpMethod.POST, "/api/users/{roleId}/roles").permitAll() // Assign roles to users requires ADMIN authority
-                .requestMatchers(HttpMethod.GET, "/api/users/{roleId}/roles").permitAll() // Assign roles to users requires ADMIN authority
-                .requestMatchers("/api/users/{userId}/roles").permitAll() // Assign roles to user requires ADMIN authority
-                .anyRequest().permitAll() // All other requests require ADMIN authority
+                .requestMatchers(HttpMethod.POST, "/api/roles").hasAuthority("ADMIN") // Role creation requires ADMIN authority
+                .requestMatchers(HttpMethod.GET, "/api/roles").hasAuthority("ADMIN") // List roles requires ADMIN authority
+                .requestMatchers(HttpMethod.DELETE, "/api/roles/{id}").hasAuthority("ADMIN") // Delete roles requires ADMIN authority
+                .requestMatchers(HttpMethod.GET, "/api/roles/{id}").hasAuthority("ADMIN") // Get role by ID requires ADMIN authority
+                .requestMatchers(HttpMethod.PUT, "/api/roles/{id}").hasAuthority("ADMIN") // Update roles requires ADMIN authority
+                .requestMatchers(HttpMethod.POST, "/api/permissions").hasAuthority("ADMIN") // Create permissions requires ADMIN authority
+                .requestMatchers(HttpMethod.GET, "/api/permissions/{id}").hasAuthority("ADMIN") // Get permission by ID requires ADMIN authority
+                .requestMatchers(HttpMethod.GET, "/api/permissions").hasAuthority("ADMIN") // List permissions requires ADMIN authority
+                .requestMatchers(HttpMethod.PUT, "/api/permissions/{id}").hasAuthority("ADMIN") // Update permissions requires ADMIN authority
+                .requestMatchers(HttpMethod.DELETE, "/api/permissions/{id}").hasAuthority("ADMIN") // Delete permissions requires ADMIN authority
+                .requestMatchers(HttpMethod.POST, "/api/users").hasAuthority("ADMIN") // Create users requires ADMIN authority
+                .requestMatchers(HttpMethod.GET, "/api/users").hasAuthority("ADMIN") // List users requires ADMIN authority
+                .requestMatchers(HttpMethod.GET, "/api/users/{id}").hasAuthority("ADMIN") // Get user by ID requires ADMIN authority
+                .requestMatchers(HttpMethod.PUT, "/api/users/{id}").hasAuthority("ADMIN") // Update users requires ADMIN authority
+                .requestMatchers(HttpMethod.DELETE, "/api/users/{id}").hasAuthority("ADMIN") // Delete users requires ADMIN authority
+                .requestMatchers(HttpMethod.POST, "/api/roles/{roleId}/permissions").hasAuthority("ADMIN") // Assign permissions to roles requires ADMIN authority
+                .requestMatchers(HttpMethod.PUT, "/api/roles/{roleId}/permissions").hasAuthority("ADMIN") // Assign permissions to roles requires ADMIN authority
+                .requestMatchers(HttpMethod.GET, "/api/roles/{roleId}/permissions").hasAuthority("ADMIN") // List permissions for roles requires ADMIN authority
+                .requestMatchers(HttpMethod.POST, "/api/users/{roleId}/roles").hasAuthority("ADMIN") // Assign roles to users requires ADMIN authority
+                .requestMatchers(HttpMethod.PUT, "/api/users/{userId}/roles").hasAuthority("ADMIN") // Update roles for users requires ADMIN authority
+                .requestMatchers(HttpMethod.GET, "/api/users/{userId}/roles").hasAuthority("ADMIN") // Get roles for user requires ADMIN authority
+                .requestMatchers("/api/users/{userId}/roles").hasAuthority("ADMIN") // Assign roles to user requires ADMIN authority
+                .anyRequest().hasAuthority("ADMIN") // All other requests require ADMIN authority
             )
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Custom CORS configuration
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter

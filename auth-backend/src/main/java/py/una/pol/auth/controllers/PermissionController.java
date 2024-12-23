@@ -26,7 +26,9 @@ public class PermissionController {
         this.permissionService = permissionService;
     }
 
-    /* metodo que obtiene todos los permisos del sistema */
+    /* metodo que obtiene todos los permisos del sistema 
+     * @return: una lista con todos los permisos del sistema
+    */
     @GetMapping
     @Operation(summary="Obtener todos los permisos del sistema",description="Metodo que retorna una lista de todos los permisos del sisema")
     @ApiResponses(value={
@@ -44,7 +46,7 @@ public class PermissionController {
     }
 
     /* Metodo que crea un permiso 
-     * @param: recibe un pbjeto PermissionDto como parametro y retorna un objeto PermissionDto que representa el permiso creado
+     * @param: recibe un objeto PermissionDto como parametro y retorna un objeto PermissionDto que representa el permiso creado
     */
 
     @PostMapping
@@ -64,6 +66,63 @@ public class PermissionController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    /**
+     * Obtiene un permiso por su ID.
+     *
+     * @param id El ID del permiso.
+     * @return El permiso correspondiente al ID.
+     */
+    @GetMapping("/{id}")
+    @Operation(summary = "Obtiene un permiso por ID", description = "Devuelve los detalles de un permiso específico.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Permiso encontrado."),
+            @ApiResponse(responseCode = "404", description = "Permiso no encontrado."),
+            @ApiResponse(responseCode = "500", description = "Error en el servidor al obtener el permiso.")
+    })
+    public ResponseEntity<PermissionDto> getPermissionById(@PathVariable Long id) {
+        PermissionDto permission = permissionService.findById(id);
+        return new ResponseEntity<>(permission, HttpStatus.OK);
+    }
+
+    /*
+     * Actualiza un permiso existente.
+     *
+     * @param id El id del permiso a actualizar.
+     * @param permissionDto El objeto Dto con los nuevos datos del permiso.
+     * @return El permiso actualizado.
+     */
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualiza un permiso existente", description = "Actualiza los detalles de un permiso específico.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Permiso actualizado exitosamente."),
+            @ApiResponse(responseCode = "404", description = "Permiso no encontrado."),
+            @ApiResponse(responseCode = "400", description = "Solicitud inválida."),
+            @ApiResponse(responseCode = "500", description = "Error en el servidor al actualizar el permiso.")
+    })
+    public ResponseEntity<PermissionDto> updatePermission(@PathVariable Long id, @RequestBody PermissionDto permissionDto) {
+        PermissionDto updatedPermission = permissionService.update(id, permissionDto);
+        return new ResponseEntity<>(updatedPermission, HttpStatus.OK);
+    }
+
+    /*
+     * Elimina un permiso existente.
+     *
+     * @param id El id del permiso a eliminar.
+     * @return Respuesta sin contenido.
+     */
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Elimina un permiso existente", description = "Elimina un permiso específico.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Permiso eliminado exitosamente."),
+            @ApiResponse(responseCode = "404", description = "Permiso no encontrado."),
+            @ApiResponse(responseCode = "500", description = "Error en el servidor al eliminar el permiso.")
+    })
+    public ResponseEntity<Void> deletePermission(@PathVariable Long id) {
+        permissionService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 
 
 }

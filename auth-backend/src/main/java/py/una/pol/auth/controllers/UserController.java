@@ -32,14 +32,14 @@ public class UserController {
      * @return: el objeto User que representa al usuario creado
      */
 
-     @PostMapping("/register")
-     /* Anotaciones para swagger */
-     @Operation(summary="Registra un nuevo usuario")
-     @ApiResponses(value={
-        @ApiResponse(responseCode = "500",description="Error del lado del servidor al registrar el usuario solicitado"),
-        @ApiResponse(responseCode = "201",description="Usuario Registrado Exitosamente"),
-        @ApiResponse(responseCode = "400",description="Datos no validos en la solicitud de registro de usuario")
-     })
+    @PostMapping("/register")
+    /* Anotaciones para swagger */
+    @Operation(summary="Registra un nuevo usuario")
+    @ApiResponses(value={
+    @ApiResponse(responseCode = "500",description="Error del lado del servidor al registrar el usuario solicitado"),
+    @ApiResponse(responseCode = "201",description="Usuario Registrado Exitosamente"),
+    @ApiResponse(responseCode = "400",description="Datos no validos en la solicitud de registro de usuario")
+    })
 
      public ResponseEntity<UserDto> registerUser(@RequestBody UserDto userDto){
         try{
@@ -77,7 +77,10 @@ public class UserController {
 
     }
 
-    /* Metodo que asigna un rol a un usuario */
+    /* Metodo que asigna un rol a un usuario 
+     * @param: id del usuario a asignar los roles
+     * @param: lista de roles a ser asignados
+    */
     @PutMapping("/{userId}/roles")
     @Operation(summary="Metodo que asigna un rol a un usuario")
     @ApiResponses(value = {
