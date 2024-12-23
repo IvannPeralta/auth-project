@@ -1,7 +1,7 @@
 package py.una.pol.auth.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
+import lombok.Data;//caso
 
 /* Data Transfer Object que representa a un Permiso del sistema */
 @Data

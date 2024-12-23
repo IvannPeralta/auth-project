@@ -1,0 +1,9 @@
+<div class="container mt-5">
+    <h1 class="mb-4">Bienvenido a la Aplicación</h1>
+    <p>Esta es la pantalla de inicio. Seleccione una acción:</p>
+    <div class="d-flex gap-2">
+      <button class="btn btn-success" (click)="irView('admin')" *ngIf="hasRole('ADMIN') ">Acción para Administradores</button>
+      <button class="btn btn-warning" (click)="irView('user')">Acción para Usuarios</button>
+    </div>
+  </div>
+  

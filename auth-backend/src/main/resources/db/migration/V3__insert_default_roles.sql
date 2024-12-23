@@ -4,6 +4,9 @@ INSERT INTO users (username, password)
 VALUES ('ADMIN', crypt('admin1234', gen_salt('bf')));
 INSERT INTO roles (name) VALUES ('ADMIN');
 
+INSERT INTO users (username, password)
+VALUES ('user', crypt('user123', gen_salt('bf')));
+
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT r.id AS role_id, p.id AS permission_id
 FROM permissions p

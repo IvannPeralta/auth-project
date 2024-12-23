@@ -1,5 +1,6 @@
 package py.una.pol.auth.repository;
 
+import py.una.pol.auth.model.Role;
 import py.una.pol.auth.model.User;
 import py.una.pol.auth.model.Role;
 

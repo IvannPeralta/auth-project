@@ -7,11 +7,13 @@ import py.una.pol.auth.repository.UserRepository;
 import py.una.pol.auth.model.Role;
 import py.una.pol.auth.model.User;
 import py.una.pol.auth.dto.RoleDto;
+import py.una.pol.auth.dto.RoleDto;
 import py.una.pol.auth.dto.UserDto;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Collectors;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -142,6 +144,48 @@ public class UserService {
 
         user.setRoles(new HashSet<>(roles));
 
+        userRepository.save(user);
+    }
+
+    public List<RoleDto> getRolesByUserId(Long userId) {
+        List<Role> roles = userRepository.findRolesByUserId(userId);
+        return roles.stream()
+                .map(role -> {
+                    RoleDto roleDTO = new RoleDto();
+                    roleDTO.setId(role.getId());
+                    roleDTO.setName(role.getName());
+                    return roleDTO;
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Asigna múltiples roles a un usuario. (Versión básica, sin quitar roles existentes).
+     *
+     * @param userId  ID del usuario.
+     * @param roleIds IDs de los roles a asignar.
+     */
+    public void assignRolesToUser(Long userId, List<Long> roleIds) {
+        // Verificar que el usuario existe
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    
+        System.out.println("Usuario encontrado: " + user.getUsername());
+        System.out.println("Roles actuales del usuario: " + user.getRoles().stream()
+                .map(Role::getName).collect(Collectors.toList()));
+    
+        // Verificar que todos los roles existen
+        List<Role> roles = role.findAllById(roleIds);
+    
+        // Si no se encuentran todos los roles, lanzar una excepción
+        if (roles.size() != roleIds.size()) {
+            throw new RuntimeException("Some roles not found");
+        }
+    
+        // Sobrescribir roles del usuario
+        user.setRoles(new HashSet<>(roles)); // Usamos un HashSet para evitar duplicados
+    
+        // Guardar el usuario con los roles actualizados
         userRepository.save(user);
 
     }
